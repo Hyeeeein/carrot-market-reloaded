@@ -1,3 +1,25 @@
+/* 테일윈드가 생성하는 리셋 및 기본값 */
 @tailwind base;
 @tailwind components;
+/* 컴파일러가 생성된 모든 코드를 넣는 플레이스 홀더 (예. className="w-full") */
 @tailwind utilities;
+
+/* 확장, 덮어쓰기 */
+@layer base {
+  a {
+    @apply text-orange-500;
+  }
+}
+
+@layer utilities {
+  .text-bigger-hello {
+    @apply text-3xl font-semibold;
+  }
+}
+
+/* 클래스를 추상화 */
+@layer components {
+  .primary-btn {
+    @apply w-full bg-orange-500 text-white  font-medium  rounded-md text-center hover:bg-orange-400 transition-colors;
+  }
+}
