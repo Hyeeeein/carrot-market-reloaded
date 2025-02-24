@@ -1,6 +1,6 @@
 "use server";
 
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";
 
 /* server action = async 필수! */
 // nextjs 가 post method 를 위한 route 핸들러를 만듬!
