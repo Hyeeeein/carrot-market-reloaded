@@ -8,8 +8,8 @@
 // 계속 api 를 호출하는 행위를 하면 네트워크 호출이 계속 쌓임 => 행위를 계속 하지 못하게 로딩을 만들어주자!
 
 export async function handleForm(prevState: any, formData: FormData) {
-  console.log(prevState);
-  await new Promise((resolve) => setTimeout(resolve, 5000));
+  // console.log(prevState);
+  // await new Promise((resolve) => setTimeout(resolve, 5000));
   // redirect = 이동
   // redirect('/')
   return {
