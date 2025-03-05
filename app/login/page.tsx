@@ -1,10 +1,11 @@
 "use client";
 
-import FormButton from "@/components/form-button";
-import FormInput from "@/components/form-input";
+import Button from "@/components/button";
+import Input from "@/components/input";
 import SocialLogin from "@/components/social-login";
 import { useFormState } from "react-dom";
-import { handleForm } from "./actions";
+import { logIn } from "./actions";
+import { PASSWORD_MIN_LENGTH } from "@/lib/constants";
 
 export default function LogIn() {
   /* useFormState = 폼에서 에러가 발생했을 때? 사용자에게 알려줄 수 있는 방법! */
@@ -15,7 +16,7 @@ export default function LogIn() {
   // action 함수와 useFormState 는 다른 곳에 있어야 함 action 함수는 server 고 useFormState 는 client 이기 때문에
   // 초기값도 필수로 세팅해야 함 보통은 null 을 세팅
   // ! action 함수에는 첫번째 매개변수로 prevState 를 넣어야 함 useFormState 는 이전 state 도 가져올 수 있기 때문에
-  const [state, action] = useFormState(handleForm, null);
+  const [state, dispatch] = useFormState(logIn, null);
 
   return (
     <div className="flex flex-col gap-10 py-8 px-6">
@@ -23,16 +24,23 @@ export default function LogIn() {
         <h1 className="text-2xl">안녕하세요!</h1>
         <h2 className="text-xl">Log in with email and password.</h2>
       </div>
-      <form action={action} className="flex flex-col gap-3">
-        <FormInput name="email" type="email" placeholder="Email" required />
-
-        <FormInput
+      <form action={dispatch} className="flex flex-col gap-3">
+        <Input
+          name="email"
+          type="email"
+          placeholder="Email"
+          required
+          errors={state?.fieldErrors.email}
+        />
+        <Input
           name="password"
           type="password"
           placeholder="Password"
           required
+          minLength={PASSWORD_MIN_LENGTH}
+          errors={state?.fieldErrors.password}
         />
-        <FormButton text="Log in" />
+        <Button text="Log in" />
       </form>
       <SocialLogin />
     </div>
