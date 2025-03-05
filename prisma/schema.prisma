@@ -1,0 +1,38 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement()) // default 는 기본값, autoincrement 는 생성될 때마다 자동으로 1,2,3 생성해줌
+  username  String   @unique // unique 는 고유한 값
+  email     String?  @unique // ? 는 옵셔널
+  password  String?
+  phone     String?  @unique
+  github_id String?  @unique
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt // 변경되면 그 때 시간으로 업데이트해줌
+  SMSToken  SMSToken[]
+}
+
+// sms 인증 시 사용할 모델
+model SMSToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // user   User @relation(fields: [userId], references: [id]) // relation : SMSToken 안에 있는 userId 필드가 User 의 id 를 참조하고 있다는 뜻
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade) // 현재 유저값은 필수이기 때문에 유저가 없는 SMSToken 은 있을 수 없음 따라서, Cascade 로 유저 삭제 시 SMSToken 도 삭제
+  userId Int
+}
