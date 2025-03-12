@@ -15,10 +15,10 @@ export default db;
 
 // testPrisma();
 
-db.sMSToken
-  .findMany({
-    include: {
-      user: true,
-    },
-  })
-  .then(console.log);
+// db.sMSToken
+//   .findMany({
+//     include: {
+//       user: true,
+//     },
+//   })
+//   .then(console.log);

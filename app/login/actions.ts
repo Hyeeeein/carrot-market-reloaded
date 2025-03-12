@@ -20,21 +20,45 @@
 
 "use server";
 
+import bcrypt from "bcrypt";
 import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEX,
   PASSWORD_REGEX_ERROR,
 } from "@/lib/constants";
+import db from "@/lib/db";
 import { z } from "zod";
+import getSession from "@/lib/session";
+import { redirect } from "next/navigation";
+
+const checkEmailExists = async (email: string) => {
+  const user = await db.user.findUnique({
+    where: {
+      email,
+    },
+    select: {
+      id: true,
+    },
+  });
+  // if(user){
+  //   return true
+  // } else {
+  //   return false
+  // }
+  return Boolean(user);
+};
 
 const formSchema = z.object({
-  email: z.string().email().toLowerCase(),
-  password: z
-    .string({
-      required_error: "Password is required",
-    })
-    .min(PASSWORD_MIN_LENGTH)
-    .regex(PASSWORD_REGEX, PASSWORD_REGEX_ERROR),
+  email: z
+    .string()
+    .email()
+    .toLowerCase()
+    .refine(checkEmailExists, "An account with this email does not exist."),
+  password: z.string({
+    required_error: "Password is required",
+  }),
+  // .min(PASSWORD_MIN_LENGTH)
+  // .regex(PASSWORD_REGEX, PASSWORD_REGEX_ERROR),
 });
 
 export async function logIn(prevState: any, formData: FormData) {
@@ -42,11 +66,44 @@ export async function logIn(prevState: any, formData: FormData) {
     email: formData.get("email"),
     password: formData.get("password"),
   };
-  const result = formSchema.safeParse(data);
+  const result = await formSchema.spa(data);
   if (!result.success) {
-    console.log(result.error.flatten());
+    // console.log(result.error.flatten());
     return result.error.flatten();
   } else {
-    console.log(result.data);
+    // 1. 이메일로 유저 찾기 : checkEmailExists
+
+    // 2. 사용자가 찾아졌을 때만 비밀번호의 해시값 확인
+    const user = await db.user.findUnique({
+      where: {
+        email: result.data.email,
+      },
+      select: {
+        id: true,
+        password: true,
+      },
+    });
+    // 사용자가 입력한 비밀번호와 db 의 해시값과 비교
+    const ok = await bcrypt.compare(
+      result.data.password,
+      user!.password ?? "xxxx"
+    );
+
+    // 3. 해시값이 일치하면 사용자를 로그인
+    if (ok) {
+      const session = await getSession();
+      session.id = user!.id;
+      await session.save();
+      // 4. 사용자를 /profile 로 보내기
+      redirect("/profile");
+    } else {
+      // zod 인 척..
+      return {
+        fieldErrors: {
+          password: ["Wrong password."],
+          email: [],
+        },
+      };
+    }
   }
 }
