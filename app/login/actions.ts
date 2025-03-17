@@ -1,4 +1,4 @@
-// "use server";
+"use server";
 
 // // import { redirect } from "next/navigation";
 
@@ -17,8 +17,6 @@
 //     errors: ["wrong password", "password too short"],
 //   };
 // }
-
-"use server";
 
 import bcrypt from "bcrypt";
 import {

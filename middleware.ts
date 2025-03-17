@@ -12,6 +12,8 @@ const publicOnlyUrls: Routes = {
   "/login": true,
   "/sms": true,
   "/create-account": true,
+  "/github/start": true,
+  "/github/complete": true,
 };
 
 export async function middleware(request: NextRequest) {
@@ -36,5 +38,5 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   // 지정한 주소에서만 미들웨어 실행
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"], // api|_next/static|_next/image|favicon.ico 제외한 모든 곳에서 실행
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"], // api|_next/static|_next/image|favicon.ico 제외한 모든 곳에서 실행
 };
