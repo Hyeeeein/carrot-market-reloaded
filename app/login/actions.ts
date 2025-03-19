@@ -28,6 +28,7 @@ import db from "@/lib/db";
 import { z } from "zod";
 import getSession from "@/lib/session";
 import { redirect } from "next/navigation";
+import { userLogin } from "@/common/util";
 
 const checkEmailExists = async (email: string) => {
   const user = await db.user.findUnique({
@@ -89,11 +90,8 @@ export async function logIn(prevState: any, formData: FormData) {
 
     // 3. 해시값이 일치하면 사용자를 로그인
     if (ok) {
-      const session = await getSession();
-      session.id = user!.id;
-      await session.save();
       // 4. 사용자를 /profile 로 보내기
-      redirect("/profile");
+      await userLogin(user!.id);
     } else {
       // zod 인 척..
       return {

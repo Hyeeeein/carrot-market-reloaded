@@ -12,6 +12,7 @@ import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import getSession from "@/lib/session";
+import { userLogin } from "@/common/util";
 
 // Introduction to Zod
 // const formSchema = z.object({
@@ -192,11 +193,7 @@ export async function createAccount(prevState: any, formData: FormData) {
     // cookie.id = user.id; // 새로 생성된 user id 를 쿠키 id 에 저장
     // await cookie.save();
 
-    const session = await getSession();
-    session.id = user.id;
-    await session.save();
-
     // 6. redirect
-    redirect("/profile");
+    await userLogin(user.id);
   }
 }
